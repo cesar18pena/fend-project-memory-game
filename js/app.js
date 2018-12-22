@@ -1,29 +1,28 @@
-/*
-    Paso 1
- * Create a list that holds all of your cards
+var cardList = ["diamond", "diamond", "paper-plane-o", "paper-plane-o", "bolt", "bolt",
+    "anchor", "anchor", "cube", "cube", "leaf", "leaf", "bicycle", "bicycle", "bomb", "bomb"
+];
+
+// Array with all the cards
+var deck = document.getElementsByClassName("card");
+
+// Array with open cards ()
+var openCardList = [];
+// Array of Card matched correctly
+var matchedCardList = [];
+
+// Variable to count the amount of moves
+var moves = 0;
+
+// Variable to display the amount of minutes and seconds.
+var minutes = 0;
+var seconds = 0;
+
+/**
+ * @description Shuffles Cards
+ * @param {array}
+ * @returns shuffleArray 
  */
 
-/*
-   Paso 2
-* Display the cards on the page
-*   - shuffle the list of cards using the provided "shuffle" method below
-*   - loop through each card and create its HTML
-*   - add each card's HTML to the page
-*/
-
-/*
-    Paso 3
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
-
-// Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length,
         temporaryValue,
@@ -40,10 +39,14 @@ function shuffle(array) {
     return array;
 }
 
-// display the card's symbol
-function openCard(event) {
-    event.target.classList.add("open");
-    event.target.classList.add("show");
+/**
+ * @description Receive the selected card to display the icon
+ * @param {event} selectedElement 
+ * @returns nothings; it is a void function
+ */
+function openCard(selectedElement) {
+    selectedElement.target.classList.add("open");
+    selectedElement.target.classList.add("show");
 }
 
 // add the card to a *list* of "open" cards
@@ -51,22 +54,40 @@ function addOpenCard(element) {
     openCardList.push(element);
 }
 
-function matchCards(element1, element2) {
-    element1.classList.add("match");
-    element2.classList.add("match");
-    element1.classList.remove("open", "show");
-    element2.classList.remove("open", "show");
+/**
+ * @description Take the two selected cards and verify if they match.
+ * @param {Object with first card selected} firstSelectedCard 
+ * @param {Object with second card selected} secondSelectedCard 
+ * @returns nothing; it is a void function
+ */
+function matchCards(firstSelectedCard, secondSelectedCard) {
+    firstSelectedCard.classList.add("match");
+    secondSelectedCard.classList.add("match");
+    firstSelectedCard.classList.remove("open", "show");
+    secondSelectedCard.classList.remove("open", "show");
+
+    matchedCardList.push(firstSelectedCard, secondSelectedCard);
     openCardList = [];
 }
-
-function unmatchCards(element1, element2) {
+/**
+ * @description Close the two selected cards icons.
+ * @param {Object with first card selected} firstSelectedCard 
+ * @param {Object with second card selected} secondSelectedCard 
+ * @returns nothing; it is a void function
+ */
+function unmatchCards(firstSelectedCard, secondSelectedCard) {
     setTimeout(function () {
-        element1.classList.remove("open", "show");
-        element2.classList.remove("open", "show");
+        firstSelectedCard.classList.remove("open", "show");
+        secondSelectedCard.classList.remove("open", "show");
         openCardList = [];
-    }, 500);
+    }, 400);
 }
 
+/**
+ * @description display the amount of time playing the game
+ * @param 
+ * @returns nothings; it is a void function
+ */
 function countTime() {
     setInterval(function () {
         document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s";
@@ -79,59 +100,89 @@ function countTime() {
     }, 1000);
 }
 
+/**
+ * @description increase the amount of moves each time a card is selected
+ * @param 
+ * @returns Nothings; it is void
+ */
 function addMove() {
     moves++;
     document.getElementsByClassName("moves")[0].innerHTML = moves;
 }
 
+/**
+ * @description Remove the amount of start after an specific number of moves.
+ * @param 
+ * @returns Nothings; it is void
+ */
 function removeStars() {
     if (moves % 10 === 0) {
         var star = document.getElementsByClassName("fa-star")[0];
         star.classList.remove("fa-star");
-        star.classList.add("fa-star-o");
     }
 }
 
-// General
+/**
+ * @description Open the model after you win the match.
+ * @param 
+ * @returns Nothings; it is void
+ */
+function openModal() {
+    if (matchedCardList.length == 16) {
+        $('#result').modal('show');
+        document.getElementById("result-timer").innerHTML = minutes + "m " + seconds + "s";
+        document.getElementsByClassName("moves")[1].innerHTML = moves;
+    }
+}
+
+/**
+ * @description This is called every time a card is selected
+ * @param {Event} event
+ * @returns Nothings; it is void
+ */
 function onClickCard(event) {
     openCard(event);
     addOpenCard(event.target);
     addMove();
 
+    var firstCard = openCardList[0];
+    var secondCard = openCardList[1];
+
     if (openCardList.length > 0) {
-        if (openCardList[0].innerHTML == openCardList[1].innerHTML) {
-            matchCards(openCardList[0], openCardList[1]);
+        if (firstCard.innerHTML == secondCard.innerHTML) {
+            matchCards(firstCard, secondCard);
+            openModal();
         } else {
-            unmatchCards(openCardList[0], openCardList[1]);
+            unmatchCards(firstCard, secondCard);
         }
     }
-
     removeStars();
 }
 
-var cardList = ["diamond", "diamond", "paper-plane-o", "paper-plane-o", "bolt", "bolt",
-    "anchor", "anchor", "cube", "cube", "leaf", "leaf", "bicycle", "bicycle", "bomb", "bomb"
-];
-
-var allElements = document.getElementsByClassName("card");
-var openCardList = [];
-var minutes = 0;
-var seconds = 0;
-var moves = 0;
-
+/**
+ * @description Start the game and reset any values to their default ones.
+ * @param 
+ * @returns Nothings; it is void
+ */
 function init() {
     shuffle(cardList);
+    clearInterval(countTime);
+    clearInterval(unmatchCards);
 
+    // Putting the deck empty
     document.getElementsByClassName("deck")[0].innerHTML = "";
 
+    // Displaying the 16 cards on screen.
     for (var i = 0; i < cardList.length; i++) {
-        document.getElementsByClassName("deck")[0].innerHTML +=
-            '<li class="card"> <i class="fa fa-' + cardList[i] + '"> </i></li>';
+        document.getElementsByClassName("deck")[0].innerHTML += '<li class="card"> <i class="fa fa-' + cardList[i] + '"> </i></li>';
     }
 
-    for (var i = 0; i < allElements.length; i++) {
-        allElements[i].addEventListener("click", onClickCard, false);
+    // Add to each card an event, when it is clicked.
+    for (var i = 0; i < deck.length; i++) {
+        deck[i].addEventListener("click", onClickCard, false);
     }
+
+    document.getElementsByClassName("moves")[0].innerHTML = 0;
 
     minutes = 0;
     seconds = 0;
