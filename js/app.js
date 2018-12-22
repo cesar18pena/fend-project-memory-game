@@ -25,7 +25,9 @@
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+    var currentIndex = array.length,
+        temporaryValue,
+        randomIndex;
 
     while (currentIndex !== 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -49,39 +51,89 @@ function addOpenCard(element) {
     openCardList.push(element);
 }
 
-function matchCard(element) {
-    element.classList.add('match');
+function matchCards(element1, element2) {
+    element1.classList.add("match");
+    element2.classList.add("match");
+    element1.classList.remove("open", "show");
+    element2.classList.remove("open", "show");
+    openCardList = [];
+}
+
+function unmatchCards(element1, element2) {
+    setTimeout(function () {
+        element1.classList.remove("open", "show");
+        element2.classList.remove("open", "show");
+        openCardList = [];
+    }, 500);
+}
+
+function countTime() {
+    setInterval(function () {
+        document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s";
+        seconds++;
+
+        if (seconds == 60) {
+            minutes++;
+            seconds = 0;
+        }
+    }, 1000);
+}
+
+function addMove() {
+    moves++;
+    document.getElementsByClassName("moves")[0].innerHTML = moves;
+}
+
+function removeStars() {
+    if (moves % 10 === 0) {
+        var star = document.getElementsByClassName("fa-star")[0];
+        star.classList.remove("fa-star");
+        star.classList.add("fa-star-o");
+    }
 }
 
 // General
 function onClickCard(event) {
     openCard(event);
     addOpenCard(event.target);
+    addMove();
 
-    if (openCardList.length >= 2) {
-        for (var i = 0; i < openCardList.length; i++) {
-            var selectedCard = openCardList[i];
-            for (var j = 1; j < openCardList.length; j++) {
-                if (selectedCard.innerHTML == openCardList[j].innerHTML) {
-                    matchCard(selectedCard);
-                    matchCard(openCardList[j]);
-                }
-            }
+    if (openCardList.length > 0) {
+        if (openCardList[0].innerHTML == openCardList[1].innerHTML) {
+            matchCards(openCardList[0], openCardList[1]);
+        } else {
+            unmatchCards(openCardList[0], openCardList[1]);
         }
     }
+
+    removeStars();
 }
 
-var cardList = ['diamond', 'diamond', 'paper-plane-o', 'paper-plane-o',
-    'bolt', 'bolt', 'anchor', 'anchor', 'cube', 'cube', 'leaf', 'leaf', 'bicycle', 'bicycle', 'bomb', 'bomb'];
+var cardList = ["diamond", "diamond", "paper-plane-o", "paper-plane-o", "bolt", "bolt",
+    "anchor", "anchor", "cube", "cube", "leaf", "leaf", "bicycle", "bicycle", "bomb", "bomb"
+];
 
-shuffle(cardList);
-for (var i = 0; i < cardList.length; i++) {
-    document.getElementsByClassName('deck')[0].innerHTML += '<li class="card"> <i class="fa fa-' + cardList[i] + '"> </i></li>';
-}
-
-var allElements = document.getElementsByClassName('card');
-for (var i = 0; i < allElements.length; i++) {
-    allElements[i].addEventListener("click", onClickCard, false);
-}
-
+var allElements = document.getElementsByClassName("card");
 var openCardList = [];
+var minutes = 0;
+var seconds = 0;
+var moves = 0;
+
+function init() {
+    shuffle(cardList);
+
+    document.getElementsByClassName("deck")[0].innerHTML = "";
+
+    for (var i = 0; i < cardList.length; i++) {
+        document.getElementsByClassName("deck")[0].innerHTML +=
+            '<li class="card"> <i class="fa fa-' + cardList[i] + '"> </i></li>';
+    }
+
+    for (var i = 0; i < allElements.length; i++) {
+        allElements[i].addEventListener("click", onClickCard, false);
+    }
+
+    minutes = 0;
+    seconds = 0;
+    countTime();
+}
