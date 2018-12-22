@@ -1,4 +1,5 @@
 # Memory Game (Udacity Project)
+This is the second project from Udacity Front-end Development Nanodegree.
 ![](img/main-page.png)
 
 ## What is a Memory Game
@@ -15,4 +16,3 @@ The objetive is to match the cards in the less time possible and with the less m
 - Click on any card that you like
 - Cards are going to reveal theirs icons, so start trying to remember the symbols in each card.
 - Match the cards properly with the less moves as possible and as quick as you can.
-

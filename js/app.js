@@ -116,7 +116,7 @@ function addMove() {
  * @returns Nothings; it is void
  */
 function removeStars() {
-    if (moves % 10 === 0) {
+    if (moves % 16 === 0) {
         var star = document.getElementsByClassName("fa-star")[0];
         star.classList.remove("fa-star");
     }
