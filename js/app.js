@@ -17,6 +17,12 @@ var moves = 0;
 var minutes = 0;
 var seconds = 0;
 
+// Variable to count the amount of stars
+var stars = 0;
+
+// Variable to stop time after match end
+var interval;
+
 /**
  * @description Shuffles Cards
  * @param {array}
@@ -89,7 +95,7 @@ function unmatchCards(firstSelectedCard, secondSelectedCard) {
  * @returns nothings; it is a void function
  */
 function countTime() {
-    setInterval(function () {
+    interval = setInterval(function () {
         document.getElementById("timer").innerHTML = minutes + "m " + seconds + "s";
         seconds++;
 
@@ -119,6 +125,7 @@ function removeStars() {
     if (moves % 16 === 0) {
         var star = document.getElementsByClassName("fa-star")[0];
         star.classList.remove("fa-star");
+        stars--;
     }
 }
 
@@ -129,9 +136,13 @@ function removeStars() {
  */
 function openModal() {
     if (matchedCardList.length == 16) {
+        clearInterval(interval);
         $('#result').modal('show');
         document.getElementById("result-timer").innerHTML = minutes + "m " + seconds + "s";
         document.getElementsByClassName("moves")[1].innerHTML = moves;
+        for (var i = 0; i < stars; i++) {
+            document.getElementById("result-stars").innerHTML += "<i class='fa fa-star'></i>";
+        }
     }
 }
 
@@ -143,17 +154,18 @@ function openModal() {
 function onClickCard(event) {
     openCard(event);
     addOpenCard(event.target);
-    addMove();
 
     var firstCard = openCardList[0];
     var secondCard = openCardList[1];
 
     if (openCardList.length > 0) {
-        if (firstCard.innerHTML == secondCard.innerHTML) {
+        if (firstCard.innerHTML == secondCard.innerHTML && firstCard != secondCard) {
             matchCards(firstCard, secondCard);
+            addMove();
             openModal();
         } else {
             unmatchCards(firstCard, secondCard);
+            addMove();
         }
     }
     removeStars();
@@ -166,11 +178,18 @@ function onClickCard(event) {
  */
 function init() {
     shuffle(cardList);
-    clearInterval(countTime);
+    clearInterval(interval);
     clearInterval(unmatchCards);
 
-    // Putting the deck empty
+    stars = 3;
+    minutes = 0;
+    seconds = 0;
+    moves = 0;
+    matchedCardList = [];
+
+    // Putting the deck and stars symbol empty
     document.getElementsByClassName("deck")[0].innerHTML = "";
+    document.getElementsByClassName("stars")[0].innerHTML = "";
 
     // Displaying the 16 cards on screen.
     for (var i = 0; i < cardList.length; i++) {
@@ -182,9 +201,13 @@ function init() {
         deck[i].addEventListener("click", onClickCard, false);
     }
 
-    document.getElementsByClassName("moves")[0].innerHTML = 0;
+    // Add stars symbol when the game start
+    for (var i = 0; i < stars; i++) {
+        document.getElementsByClassName("stars")[0].innerHTML += "<li><i class='fa fa-star'</i></li>";
+    }
 
-    minutes = 0;
-    seconds = 0;
+    document.getElementsByClassName("moves")[0].innerHTML = 0;
+    document.getElementById("result-stars").innerHTML = "";
+
     countTime();
 }
