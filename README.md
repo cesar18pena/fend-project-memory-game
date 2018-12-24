@@ -1,5 +1,6 @@
 # Memory Game (Udacity Project)
 This is the second project from Udacity Front-end Development Nanodegree.
+
 ![](img/main-page.png)
 
 ## What is a Memory Game

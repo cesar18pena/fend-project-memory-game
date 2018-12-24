@@ -158,7 +158,7 @@ function onClickCard(event) {
     var firstCard = openCardList[0];
     var secondCard = openCardList[1];
 
-    if (openCardList.length > 0) {
+    if (openCardList.length > 1) {
         if (firstCard.innerHTML == secondCard.innerHTML && firstCard != secondCard) {
             matchCards(firstCard, secondCard);
             addMove();
@@ -185,6 +185,7 @@ function init() {
     minutes = 0;
     seconds = 0;
     moves = 0;
+    openCardList = [];
     matchedCardList = [];
 
     // Putting the deck and stars symbol empty
