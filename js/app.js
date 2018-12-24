@@ -158,7 +158,7 @@ function onClickCard(event) {
     var firstCard = openCardList[0];
     var secondCard = openCardList[1];
 
-    if (openCardList.length > 1) {
+    if (openCardList.length > 0) {
         if (firstCard.innerHTML == secondCard.innerHTML && firstCard != secondCard) {
             matchCards(firstCard, secondCard);
             addMove();
