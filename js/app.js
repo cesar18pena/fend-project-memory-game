@@ -117,12 +117,24 @@ function addMove() {
 }
 
 /**
+ * @description decrease the amount of moves each time a card is pressed twice
+ * @param 
+ * @returns Nothings; it is void
+ */
+function decreaseMove() {
+    if (moves > 0) {
+        moves--;
+        document.getElementsByClassName("moves")[0].innerHTML = moves;
+    }
+}
+
+/**
  * @description Remove the amount of start after an specific number of moves.
  * @param 
  * @returns Nothings; it is void
  */
 function removeStars() {
-    if (moves % 16 === 0) {
+    if (moves % 16 === 0 && stars !== 0) {
         var star = document.getElementsByClassName("fa-star")[0];
         star.classList.remove("fa-star");
         stars--;
@@ -151,12 +163,18 @@ function openModal() {
  * @param {Event} event
  * @returns Nothings; it is void
  */
+
 function onClickCard(event) {
     openCard(event);
     addOpenCard(event.target);
 
     var firstCard = openCardList[0];
     var secondCard = openCardList[1];
+
+    if (firstCard === secondCard) {
+        alert('Cannot repeat same card, please press another one');
+        decreaseMove();
+    }
 
     if (openCardList.length > 0) {
         if (firstCard.innerHTML == secondCard.innerHTML && firstCard != secondCard) {
